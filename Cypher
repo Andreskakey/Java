@@ -1,0 +1,213 @@
+package oop;
+
+public class ShuffleCipher implements MessageEncoder,MessageDecoder {
+	
+	private int numberOfShufles;
+	
+	public ShuffleCipher(int n){
+		numberOfShufles=n;
+	}
+
+
+
+	@Override
+	public String encode(String plainText) {
+		// TODO Auto-generated method stub
+		String tempText="";
+		for(int i=0;i<numberOfShufles;i++){
+			tempText=oneShufleEncode(plainText);
+			plainText=tempText;
+		}
+		return tempText;
+	}
+	private String oneShufleEncode(String s){
+		
+		String shufledS="";
+		char[] ch1=new char[(int)((s.length()+1)/2)];
+		char[] ch2=new char[(int)((s.length())/2)];
+		char[] ch=new char[s.length()];
+	
+		for(int i=0;i<s.length();i++){
+			ch[i]=(char) s.charAt(i);
+			if(i<ch1.length){
+				 
+				ch1[i]=ch[i];
+				}
+			else
+				ch2[i-ch1.length]=ch[i];
+		}
+		for(int i=0;i<ch2.length;i++){
+			shufledS+=Character.toString(ch1[i]);
+			shufledS+=Character.toString(ch2[i]);
+		}
+		if(s.length()%2!=0)
+			shufledS+=Character.toString(ch1[(ch1.length)-1]);
+			
+		return shufledS;
+	}
+
+
+
+	@Override
+	public String decode(String chiperText) {
+		// TODO Auto-generated method stub
+		String tempText="";
+		for(int i=0;i<numberOfShufles;i++){
+			tempText=oneShufleDecode(chiperText);
+			chiperText=tempText;
+			}
+		return chiperText;
+	}
+	private String oneShufleDecode(String s){
+		String shufledS1="",shufledS2="";
+
+		char[] ch=new char[s.length()];
+	
+		for(int i=0;i<s.length();i++){
+			ch[i]=(char) s.charAt(i);
+			if(i%2==0){
+				shufledS1+=Character.toString(ch[i]);
+				}
+			else
+				shufledS2+=Character.toString(ch[i]);
+		}
+		
+			
+		return shufledS1+shufledS2;
+	}
+}
+package oop;
+
+public interface MessageEncoder {
+	
+	public abstract String encode(String plainText);
+}
+
+package oop;
+
+public interface MessageDecoder {
+ 
+	public String decode(String chiperText);
+}
+
+package oop;
+
+import java.util.Scanner;
+
+public class Test {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		String message,answer;
+		int choice,shuffle,shift;
+
+		MessageEncoder chiper=new SubstitutionCipher(1);
+		System.out.println(chiper.encode("abcdefghijklmn"));
+		MessageDecoder ch=new SubstitutionCipher(1);
+		System.out.println(ch.decode("bcdefghijklmno"));
+		MessageEncoder shchiper=new ShuffleCipher(1);
+		System.out.println(shchiper.encode("abcdefghi"));
+		MessageDecoder sh1=new ShuffleCipher(1);
+		System.out.println(sh1.decode("afbgchdie")+"\n");
+
+		do{
+			System.out.println("Enter the message to be encode or decode: ");
+			Scanner inkey= new Scanner(System.in);       
+			message=inkey.nextLine();
+			menu();
+
+			choice=inkey.nextInt();
+			if(choice<1&&choice>4){
+				System.out.println("Wrong Entery try again.\n");
+				menu();
+			}
+			switch(choice){
+
+			case 1:
+				System.out.println("How many shufles you want to prefom on message: ");
+				shuffle=inkey.nextInt();
+				MessageDecoder decoder1=new ShuffleCipher(shuffle);
+				System.out.println(decoder1.decode(message)+"\n");
+				break;
+
+			case 2:
+				System.out.println("How many shifts you want to prefom on message: ");
+				shift=inkey.nextInt();
+				MessageDecoder decoder2=new SubstitutionCipher(shift);
+				System.out.println(decoder2.decode(message)+"\n");
+				break;
+
+			case 3:
+				System.out.println("How many shufles you want to prefom on message: ");
+				shuffle=inkey.nextInt();
+				MessageEncoder encoder1=new ShuffleCipher(shuffle);
+				System.out.println(encoder1.encode(message)+"\n");
+				break;
+			case 4:
+				System.out.println("How many shifts you want to prefom on message: ");
+				shift=inkey.nextInt();
+				MessageEncoder encoder2=new SubstitutionCipher(shift);
+				System.out.println(encoder2.encode(message)+"\n");
+				break;
+			}
+			System.out.println("Do you want to decode or encode more messages? ");
+			System.out.println("Enter yes or no.");
+			answer=inkey.next();
+
+		}while(answer.equalsIgnoreCase("yes"));
+
+
+	}
+	public static void menu(){
+		System.out.println("Select from the options below: ");
+		System.out.println("1.Decode by Shufle.");
+		System.out.println("2.Decode by Substitution.");
+		System.out.println("3.Encode by Shufle.");
+		System.out.println("4.Encode by Substitution.");
+	}
+
+}
+
+package oop;
+
+public class SubstitutionCipher implements MessageEncoder,MessageDecoder{
+	private int sh;
+	
+	public SubstitutionCipher(int shift){
+		sh=shift;
+	}
+
+	@Override
+	public String encode(String plainText) {
+		// TODO Auto-generated method stub
+	   String tempS="";
+		for(int i=0;i<plainText.length();i++){
+			char c=(char) plainText.charAt(i);
+			c+=sh;
+			tempS+=Character.toString(c);			
+		}
+		return tempS;
+	}
+
+	@Override
+	public String decode(String chiperText) {
+		// TODO Auto-generated method stub
+		String tempS="";
+		for(int i=0;i<chiperText.length();i++){
+			char c=(char) chiperText.charAt(i);
+			c-=sh;
+			tempS+=Character.toString(c);
+			}	
+		return tempS;
+	}
+	
+	/*public String toString(){
+		return this.encode(plainText);
+	}*/
+	
+
+}
